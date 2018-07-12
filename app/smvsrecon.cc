@@ -18,6 +18,7 @@
 #include "mve/image_tools.h"
 #include "mve/mesh_io.h"
 #include "mve/mesh_io_ply.h"
+#include "mve/mesh_tools.h"
 #include "util/arguments.h"
 #include "util/file_system.h"
 #include "util/strings.h"
@@ -333,6 +334,13 @@ void generate_mesh (AppSettings const& conf, mve::Scene::Ptr scene,
         meshname += "B";
     meshname += util::string::get(conf.input_scale) + ".ply";
     meshname = util::fs::join_path(scene->get_path(), meshname);
+
+    math::Matrix3f flip;
+    flip.fill(0.f);
+    flip(0, 0) = 1.f;
+    flip(1, 1) = -1.f;
+    flip(2, 2) = -1.f;
+    mve::geom::mesh_transform(mesh, flip);
 
     /* Save mesh */
     mve::geom::SavePLYOptions opts;
